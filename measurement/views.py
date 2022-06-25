@@ -1,11 +1,12 @@
 # TODO: опишите необходимые обработчики, рекомендуется использовать generics APIView классы:
 # TODO: ListCreateAPIView, RetrieveUpdateAPIView, CreateAPIView
-from requests import request
+import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import SensorSerializer, SensorDetailSerializer 
 from .models import Sensor, Measurement
 from rest_framework import status
+
 
 
 class AllSensorView(APIView):
@@ -55,16 +56,17 @@ class MeasurementView(APIView):
 
     def post(self, request):
         try:
-            sensor_id = int(request.GET.get('sensor'))
+            sensor_id = int(request.headers.get('sensor'))
             sensor = Sensor.objects.get(id=sensor_id)
-            temperatute = int(request.GET.get('temperature'))
-            print(sensor_id)
+            temperatute = int(request.headers.get('temperature'))
         except TypeError:
             return Response(
                     {'status': 'Temperatute and id must be integer'},
                     status=status.HTTP_400_BAD_REQUEST
                     )
-        measurement = Measurement(sensor=sensor, temperature=temperatute)
+        photo = request.data['photo']
+        photo.name = f'{sensor_id}-{datetime.datetime.utcnow()}.jpeg'
+        measurement = Measurement(sensor=sensor, temperature=temperatute, photo=photo)
         measurement.save()
         response = measurement.__dict__
         response.pop('_state')

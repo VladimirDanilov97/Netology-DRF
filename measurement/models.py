@@ -14,7 +14,7 @@ class Measurement(models.Model):
     sensor = models.ForeignKey(Sensor, on_delete=models.PROTECT, related_name='measurements')
     temperature = models.IntegerField()
     date = models.DateTimeField(auto_now=True)
-    photo = models.ImageField(blank=True, null=True, upload_to='media/')
+    photo = models.ImageField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.sensor_id}: {self.temperature} {self.date}' 

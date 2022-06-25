@@ -7,5 +7,3 @@ with open('sample.jpeg', 'rb') as ph:
     }
     files = {'photo': ph.read()}
     response = requests.post('http://127.0.0.1:8000/api/measurements/', headers=headers, files=files)
-    print(response)
-    print(response.content)

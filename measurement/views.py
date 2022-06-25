@@ -1,12 +1,9 @@
-# TODO: опишите необходимые обработчики, рекомендуется использовать generics APIView классы:
-# TODO: ListCreateAPIView, RetrieveUpdateAPIView, CreateAPIView
 import datetime
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .serializers import SensorSerializer, SensorDetailSerializer 
 from .models import Sensor, Measurement
 from rest_framework import status
-
 
 
 class AllSensorView(APIView):
@@ -37,11 +34,15 @@ class SensorView(APIView):
         except Sensor.DoesNotExist:
             sensor = None
         if sensor:
+
             description = request.GET.get('description', sensor.description)
             name = request.GET.get('name', sensor.name)
+
             sensor.description=description
             sensor.name=name
+
             sensor.save()
+
             response = sensor.__dict__
             response.pop('_state')
             return Response(response, status=status.HTTP_200_OK)
@@ -68,6 +69,7 @@ class MeasurementView(APIView):
         photo.name = f'{sensor_id}-{datetime.datetime.utcnow()}.jpeg'
         measurement = Measurement(sensor=sensor, temperature=temperatute, photo=photo)
         measurement.save()
+
         response = measurement.__dict__
         response.pop('_state')
         return Response(response, status=status.HTTP_200_OK)
